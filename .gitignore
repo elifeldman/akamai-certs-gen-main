@@ -1,0 +1,7 @@
+# Locals and plugins
+.DS_Store
+.idea
+
+# Secrets
+.edgerc
+.env
