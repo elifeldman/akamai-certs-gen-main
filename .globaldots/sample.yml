@@ -1,0 +1,88 @@
+---
+# #######################################
+# Basic Cert Info (DO NOT MODIFY)
+# #######################################
+validationType: dv
+ra: lets-encrypt
+certificateType: san
+# #######################################
+# Akamai Defaults (MODIFY IF NEEDED, OTHERWISE LEAVE AS DEFAULT)
+# #######################################
+enableMultiStackedCertificates: false
+signatureAlgorithm: SHA-256
+networkConfiguration:
+  preferredCiphers: ak-akamai-default-2017q3
+  mustHaveCiphers: ak-akamai-default-2017q3
+  disallowedTlsVersions: []
+  # SNI: Use this section to designate SNI information
+  sni:
+    cloneDnsNames: true
+    dnsNames:
+    - <FILLIN>
+    - <FILLIN AS NEEDED>
+  secureNetwork: standard-tls
+  geography: core
+# #######################################
+# Customer Edit (PLEASE UPDATE BELOW)
+# (ANY STRING VALUES THAT START WITH 0 SHOULD USE DOUBLE QUOTES: "")
+# #######################################
+# Change Management (true or false)
+changeManagement: false
+# Technical Contact Info
+techContact:
+  firstName: Tomasz
+  lastName: Bogdano
+  title: Technical
+  email: tbogdano@akamai.com
+  phone: 1111111
+  organizationName: akamai
+  addressLineOne: <FILLIN>
+  addressLineTwo: <FILLIN>
+  country: <FILLIN>
+  city: <FILLIN>
+  region: <FILLIN>
+  postalCode: <FILLIN>
+# Admin Contact
+adminContact:
+  firstName: Itamar
+  lastName: Golan
+  title: folloze
+  email: itamarg@folloze.com
+  phone: 1111111
+  organizationName: folloze
+  addressLineOne: <FILLIN>
+  addressLineTwo: <FILLIN>
+  country: US
+  city: <FILLIN>
+  region: <FILLIN>
+  postalCode: 1111111
+# Org Info
+org:
+  name: Folloze Inc
+  addressLineTwo: 950 Tower Lane
+  addressLineOne: Suite 750
+  country: US
+ city: Foster City
+  region: California
+  postalCode: 94404
+  phone: 1111111
+# CSR Info
+csr:
+  #Common Name (CN)
+  cn: foo.com
+  #Organization
+  o: Folloze Inc
+  #Organization Unit (OU)
+  ou: <FILLIN>
+  #Country
+  c: US
+  #Locality
+  l: <FILLIN>
+  #State Province Name
+  st: <FILLIN>
+  # Specify at list of SAN entries (at least 1 should be specified)
+  # - san entry 1
+  # - san entry 2
+  sans:
+  - foo.com
+  # #######################################
