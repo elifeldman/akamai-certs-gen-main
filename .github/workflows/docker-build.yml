@@ -1,0 +1,17 @@
+name: Docker Build
+
+on:
+  push:
+    branches-ignore:
+      - main
+  workflow_dispatch:
+
+jobs:
+  docker:
+    name: Docker
+    uses: ./.github/workflows/_docker-ci.yml
+    with:
+      REGISTRY: "ghcr.io"
+      IMAGE_NAME: "${{ github.repository }}-cli"
+      TEST_CN: "*.staging-folloze.info"
+    secrets: inherit

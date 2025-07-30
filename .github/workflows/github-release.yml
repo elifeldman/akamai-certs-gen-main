@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # * is a special character in YAML, so you have to quote this string
+    # runs monthly at 03:30
+    - cron: '30 3 1 * *'
+
+jobs:
+  docker:
+    name: Docker
+    uses: ./.github/workflows/_docker-ci.yml
+    with:
+      REGISTRY: "ghcr.io"
+      IMAGE_NAME: "${{ github.repository }}-cli"
+      TEST_CN: "*.staging-folloze.info"
+    secrets: inherit
+
+  release:
+    name: Create tag and release
+
+    needs: [docker]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}

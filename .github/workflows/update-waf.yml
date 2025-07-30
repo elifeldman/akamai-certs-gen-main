@@ -1,0 +1,32 @@
+
+name: Add hostnames to Akamai AppSec policy
+on:
+  workflow_call:
+    inputs:
+      TARGET_CN:
+        type: string
+        required: true
+    secrets:
+        AKAMAI_EDGERC:
+          required: true
+
+
+jobs:
+  build:
+    name: Manage hostname list
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4       
+        
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+
+      - name: Run update hostnames for AppSec
+        run: go run -v . ${{ inputs.TARGET_CN }} 
+        env:
+           EDGERC: ${{ secrets.AKAMAI_EDGERC  }}
+      
+  

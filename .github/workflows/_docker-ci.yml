@@ -1,0 +1,85 @@
+name: Docker Image CI
+
+on:
+  workflow_call:
+    inputs:
+      REGISTRY:
+        description: Docker registry
+        type: string
+        required: true
+      IMAGE_NAME:
+        description: Docker container name to be created
+        type: string
+        required: true
+      TEST_CN:
+        description: Target name to test certificate status
+        type: string
+        required: true
+
+jobs:
+  build-and-push:
+    name: Build and push
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate edgerc file
+        env:
+          EDGERC: ${{ secrets.AKAMAI_EDGERC  }}
+        run: |
+          echo "$EDGERC" > ${{ github.workspace }}/.edgerc
+
+      - name: Expose secrets to the environment file
+        env:
+          CONTRACT_ID: ${{ secrets.AKAMAI_CONTRACT_ID  }}
+        run: |
+          cp .env.example .env
+          sed -i "s/contractId=.*/contractId=${CONTRACT_ID}/g" .env
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Prepare Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ inputs.REGISTRY }}/${{ inputs.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=semver,pattern={{raw}}
+            type=sha
+
+      - name: Log in to registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ inputs.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          secrets: |
+            "edgerc=${{ secrets.AKAMAI_EDGERC }}"
+
+      - name: Test Docker container
+        run: |
+          docker run --rm -v ${{ github.workspace }}/.edgerc:/home/akamai/.edgerc:ro \
+              ${{ inputs.REGISTRY }}/${{ inputs.IMAGE_NAME }}:sha-${GITHUB_SHA::7} \
+              --target=${{ inputs.TEST_CN }} --status
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          # build on all branches, push only on main branch
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          secrets: |
+            "edgerc=${{ secrets.AKAMAI_EDGERC }}"

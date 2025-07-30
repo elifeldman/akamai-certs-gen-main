@@ -1,0 +1,80 @@
+name: Run Akamai Cli
+run-name: ${{ inputs.target_action }} a hostname - ${{ inputs.target_cn }} by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      TARGET_CN:
+        description: The target domain name
+        type: string
+        required: true
+      TARGET_ACTION:
+        description: Choose the target action
+        type: choice
+        options:
+          - status
+          - activate
+          - delete
+        required: true
+        default: status
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: "ghcr.io"
+  IMAGE_NAME: "${{ github.repository }}-cli:main"
+
+jobs:
+  
+  akamai:
+    
+    name: Call Akamai API
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print normalized branch name
+        run: |
+         echo "Branch: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+        env:
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+      - uses: actions/checkout@v3
+
+      - name: Generate edgerc file
+        env:
+          EDGERC: ${{ secrets.AKAMAI_EDGERC  }}
+        run: |
+          echo "$EDGERC" > ${{ github.workspace }}/.edgerc
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Docker container
+        run: |
+          docker run --rm -v ${{ github.workspace }}/.edgerc:/home/akamai/.edgerc:ro \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
+              --target=${{ inputs.TARGET_CN }} ${ACTION}
+        env:
+          ACTION: "--${{ inputs.TARGET_ACTION }}"
+      - name: Sleep for 300 seconds
+        run: sleep 300s
+        shell: bash
+        
+  #job trigger for WAF hostnames update
+  updateWAF:
+    if: ${{ inputs.TARGET_ACTION  == 'activate' }}
+    needs: akamai
+    uses: ./.github/workflows/update-waf.yml
+    with: 
+      TARGET_CN: ${{ inputs.TARGET_CN }} 
+    secrets: inherit
