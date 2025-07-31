@@ -82,7 +82,7 @@ var mode = "append"
 var action = "ACTIVATE"
 var network = "PRODUCTION" //Update network for PRODUCTION to use in prod
 var note = "Updated by Manage Hostname List script"
-var notificationEmails = []string{"rnd-admin@folloze.com"} //Set emails for notifications
+var notificationEmails = []string{"eli.f@globaldots.com"} //Set emails for notifications
 
 func main() {
 	golog.Info(targetCN)

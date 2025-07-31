@@ -13,5 +13,5 @@ jobs:
     with:
       REGISTRY: "ghcr.io"
       IMAGE_NAME: "${{ github.repository }}-cli"
-      TEST_CN: "*.staging-folloze.info"
+      TEST_CN: "*.<domain>"
     secrets: inherit
