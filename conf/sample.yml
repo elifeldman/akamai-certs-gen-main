@@ -44,34 +44,34 @@ techContact:
   postalCode: <FILLIN>
 # Admin Contact
 adminContact:
-  firstName: Itamar
-  lastName: Golan
-  title: folloze
-  email: itamarg@folloze.com
+  firstName: <FILLIN>
+  lastName: <FILLIN>
+  title: <FILLIN>
+  email: i<FILLIN>
   phone: 1111111
-  organizationName: folloze
+  organizationName: <FILLIN>
   addressLineOne: <FILLIN>
   addressLineTwo: <FILLIN>
-  country: US
+  country: <FILLIN>
   city: <FILLIN>
   region: <FILLIN>
   postalCode: 1111111
 # Org Info
 org:
-  name: Folloze Inc
-  addressLineTwo: 950 Tower Lane
-  addressLineOne: Suite 750
-  country: US
-  city: Foster City
-  region: California
-  postalCode: 94404
+  name: <FILLIN>
+  addressLineTwo: <FILLIN>
+  addressLineOne: <FILLIN>
+  country: <FILLIN>
+  city: <FILLIN>
+  region: <FILLIN>
+  postalCode: <FILLIN>
   phone: 1111111
 # CSR Info
 csr:
   #Common Name (CN)
   cn: foo.com
   #Organization
-  o: Folloze Inc
+  o: <FILLIN>
   #Organization Unit (OU)
   ou: <FILLIN>
   #Country
