@@ -18,7 +18,7 @@ Automation for Akamai certificate generation.
 Set the environments variables:
 ```console
 $ export contractId=                         # is set in Github Secrets
-$ export edgeHostnameId="5032864"
+$ export edgeHostnameId=<ID>
 $ export workdir="/workdir/custom-hostname"
 $ export property_name="custom-hostname"
 ```
